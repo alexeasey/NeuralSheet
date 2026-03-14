@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { CellMap, CellAddress } from "../types/cell";
+import { syncCell } from "../engine/evaluator";
 
 interface StoreState {
     cells: CellMap;
@@ -31,6 +32,8 @@ export const useStore = create<StoreState>((set, get) => ({
                 [address]: { raw, type, value: null }
             }
         }));
+
+        syncCell(address, raw);
     },
 
     deleteCell: (address) =>

@@ -1,9 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Spreadsheet from "./Spreadsheet";
+import "./App.css";
+import Grid from "./components/grid/Grid";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <Spreadsheet />
+    <Grid />
   </React.StrictMode>,
 );
