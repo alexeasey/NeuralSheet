@@ -6,8 +6,11 @@ interface StoreState {
     selectedCell: CellAddress;
     editingCell: CellAddress | null;
     setCellRaw: (address: string, raw: string) => void;
+    deleteCell: (address: string) => void;
     selectCell: (col: number, row: number) => void;
-    moveSlection: (dir: "up" | "down" | "left" | "right") => void;
+    startEditing: (col: number, row: number) => void;
+    stopEditing: () => void;
+    moveSelection: (dir: "up" | "down" | "left" | "right") => void;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -30,11 +33,23 @@ export const useStore = create<StoreState>((set, get) => ({
         }));
     },
 
+    deleteCell: (address) =>
+        set(state => {
+            const next = { ...state.cells };
+            delete next[address];
+            return { cells: next };
+    }),
+
     selectCell: (col, row) => 
         set({ selectedCell: { col, row }, editingCell: null }),
 
+    startEditing: (col, row) =>
+        set({ editingCell: { col, row }, selectedCell: { col, row } }),
 
-    moveSlection: (dir) => {
+    stopEditing: () =>
+        set({ editingCell: null }),
+
+    moveSelection: (dir) => {
         const {col, row} = get().selectedCell;
         const moves = {
             up: { col, row: Math.max(0, row - 1) },
@@ -45,3 +60,14 @@ export const useStore = create<StoreState>((set, get) => ({
         set({ selectedCell: moves[dir], editingCell: null });
     }
 }))
+
+export const useIsEditing = (col: number, row: number) =>
+    useStore(state => 
+        state.editingCell?.col === col && state.editingCell?.row === row
+    );
+
+export const useSelectedCell = () =>
+    useStore(state => state.selectedCell);
+
+export const useCell = (address: string) =>
+    useStore(state => state.cells[address]);

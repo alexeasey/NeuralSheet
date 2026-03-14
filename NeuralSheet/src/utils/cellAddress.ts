@@ -24,3 +24,11 @@ export const expandRange = (range) => {
             addrs.push(cellAddress(c, r));
     return addrs;
 };
+
+// "=SUM(A1:A5)+B3" -> ["A1:A5", "B3"]
+export const extractRefs = (formula) => {
+    const ranges = formula.match(/[A-Z]+\d+:[A-Z]+\d+/gi) || [];
+    const rest = formula.replace(/[A-Z]+\d+:[A-Z]+\d+/gi, "");
+    const cells = rest.match(/[A-Z]+\d+/gi) || [];
+    return [...ranges, ...cells];
+};
