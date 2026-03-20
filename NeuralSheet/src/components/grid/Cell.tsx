@@ -36,7 +36,7 @@ export function Cell({ col, row, isSelected, rawValue, displayValue, style }) {
         ? <input ref={inputRef} value={editValue}
             onChange={e => setEditValue(e.target.value)}
             onKeyDown={handleKeyDown} onBlur={() => commit(editValue)}
-            style={{ width:"100%", height:"100%", border:"none", outline:"none" }} />
+            style={{ width:"100%", height:"100%", border:"none", outline:"none", fontSize:12 }} />
         : <span style={{ padding:"0 4px", lineHeight:"24px", fontSize:12 }}>
             {displayValue}
           </span>
