@@ -40,7 +40,7 @@ export default function Grid() {
               <Cell key={addr} col={col} row={row}
                 isSelected={selectedCell.col === col && selectedCell.row === row}
                 rawValue={raw}
-                displayValue={getCellValue(addr)}
+                displayValue={cells[addr]?.value != null ? String(cells[addr].value) : getCellValue(addr)}
                 style={{ top: vRow.start + COL_H, left: vCol.start + ROW_W }}
               />
             );

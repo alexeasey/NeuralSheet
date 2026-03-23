@@ -1,4 +1,4 @@
-import { FunctionPlugin } from "hyperformula";
+import { FunctionPlugin, FunctionArgumentType } from "hyperformula";
 
 export class AgentPlugin extends FunctionPlugin {
 
@@ -16,7 +16,7 @@ export class AgentPlugin extends FunctionPlugin {
 }
 
 AgentPlugin.implementedFunctions = {
-  "AGENT":         { method: "agent" },
-  "AGENT.WATCH":   { method: "agentWatch" },
-  "AGENT.EXPLAIN": { method: "agentExplain" },
+  "AGENT":         { method: "agent",        repeatLastArgs: 1, parameters: [{ argumentType: FunctionArgumentType.ANY, optionalArg: true }] },
+  "AGENT.WATCH":   { method: "agentWatch",   repeatLastArgs: 1, parameters: [{ argumentType: FunctionArgumentType.ANY, optionalArg: true }] },
+  "AGENT.EXPLAIN": { method: "agentExplain", repeatLastArgs: 1, parameters: [{ argumentType: FunctionArgumentType.ANY, optionalArg: true }] },
 };

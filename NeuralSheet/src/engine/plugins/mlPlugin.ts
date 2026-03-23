@@ -1,12 +1,20 @@
 import { FunctionPlugin, FunctionArgumentType } from "hyperformula";
+import { invoke } from "@tauri-apps/api/core";
+import { resolveAsyncCell } from "../asyncCellResolver";
 
 export class MLPlugin extends FunctionPlugin {
 
-  mlPredict(ast, state) {
-    // Pull the arguments HyperFormula parsed for us
+  mlPredict(ast: any, state: any) {
     const args = ast.args.map((arg) => this.evaluateAst(arg, state));
-    // Return placeholder — real result comes back async from Python
-    return "⟳ Predicting...";
+    const { col, row } = state.formulaAddress;
+    const result = "⟳ Predicting...";
+
+    // Fire async, write result back when done
+    invoke<string>("ml_predict", { result }).then(result => {
+      resolveAsyncCell(col, row, result);
+    });
+
+    return result;
   }
 
   mlCluster(ast, state) {
@@ -24,8 +32,8 @@ export class MLPlugin extends FunctionPlugin {
 
 // Tell HyperFormula which formula names map to which methods
 MLPlugin.implementedFunctions = {
-  "ML.PREDICT":  { method: "mlPredict" },
-  "ML.CLUSTER":  { method: "mlCluster" },
-  "ML.FORECAST": { method: "mlForecast" },
-  "ML.TRAIN":    { method: "mlTrain" },
+  "ML.PREDICT":  { method: "mlPredict",  repeatLastArgs: 1, parameters: [{ argumentType: FunctionArgumentType.ANY, optionalArg: true }] },
+  "ML.CLUSTER":  { method: "mlCluster",  repeatLastArgs: 1, parameters: [{ argumentType: FunctionArgumentType.ANY, optionalArg: true }] },
+  "ML.FORECAST": { method: "mlForecast", repeatLastArgs: 1, parameters: [{ argumentType: FunctionArgumentType.ANY, optionalArg: true }] },
+  "ML.TRAIN":    { method: "mlTrain",    repeatLastArgs: 1, parameters: [{ argumentType: FunctionArgumentType.ANY, optionalArg: true }] },
 };

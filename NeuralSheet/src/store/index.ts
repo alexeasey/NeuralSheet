@@ -1,12 +1,14 @@
 import { create } from "zustand";
 import type { CellMap, CellAddress } from "../types/cell";
 import { syncCell } from "../engine/evaluator";
+import { setOnResolve } from "../engine/asyncCellResolver";
 
 interface StoreState {
     cells: CellMap;
     selectedCell: CellAddress;
     editingCell: CellAddress | null;
     setCellRaw: (address: string, raw: string) => void;
+    setCellValue: (address: string, value: string) => void;
     deleteCell: (address: string) => void;
     selectCell: (col: number, row: number) => void;
     startEditing: (col: number, row: number) => void;
@@ -36,6 +38,14 @@ export const useStore = create<StoreState>((set, get) => ({
         syncCell(address, raw);
     },
 
+    setCellValue: (address, value) =>
+        set(state => ({
+            cells: {
+                ...state.cells,
+                [address]: { ...state.cells[address], value }
+            }
+        })),
+
     deleteCell: (address) =>
         set(state => {
             const next = { ...state.cells };
@@ -63,6 +73,8 @@ export const useStore = create<StoreState>((set, get) => ({
         set({ selectedCell: moves[dir], editingCell: null });
     }
 }))
+
+setOnResolve((address, value) => useStore.getState().setCellValue(address, value));
 
 export const useIsEditing = (col: number, row: number) =>
     useStore(state => 
